@@ -50,6 +50,7 @@ import com.isaakhanimann.journal.ui.tabs.journal.addingestion.dose.OptionalDosag
 import com.isaakhanimann.journal.ui.tabs.journal.addingestion.time.TimePickerButton
 import com.isaakhanimann.journal.ui.tabs.journal.experience.components.DataForOneEffectLine
 import com.isaakhanimann.journal.ui.tabs.journal.experience.timeline.AllTimelines
+import com.isaakhanimann.journal.ui.tabs.search.substance.category.CategoryDialog
 import com.isaakhanimann.journal.ui.tabs.search.substance.roa.ToleranceSection
 import com.isaakhanimann.journal.ui.tabs.search.substance.roa.dose.RoaDoseView
 import com.isaakhanimann.journal.ui.tabs.search.substance.roa.duration.RoaDurationView
@@ -71,7 +72,6 @@ fun SubstanceScreen(
     navigateToVolumetricDosingScreen: () -> Unit,
     navigateToExplainTimeline: () -> Unit,
     navigateToArticle: (url: String) -> Unit,
-    navigateToCategoryScreen: (categoryName: String) -> Unit,
     viewModel: SubstanceViewModel = hiltViewModel()
 ) {
     SubstanceScreen(
@@ -79,7 +79,6 @@ fun SubstanceScreen(
         navigateToSaferHallucinogensScreen = navigateToSaferHallucinogensScreen,
         navigateToSaferStimulantsScreen = navigateToSaferStimulantsScreen,
         navigateToVolumetricDosingScreen = navigateToVolumetricDosingScreen,
-        navigateToCategoryScreen = navigateToCategoryScreen,
         navigateToExplainTimeline = navigateToExplainTimeline,
         navigateToURL = navigateToArticle,
         substanceWithCategories = viewModel.substanceWithCategories
@@ -99,7 +98,6 @@ fun SubstanceScreenPreview(
             navigateToVolumetricDosingScreen = {},
             navigateToExplainTimeline = {},
             navigateToURL = {},
-            navigateToCategoryScreen = {},
             substanceWithCategories = substanceWithCategories
         )
     }
@@ -114,10 +112,13 @@ fun SubstanceScreen(
     navigateToVolumetricDosingScreen: () -> Unit,
     navigateToExplainTimeline: () -> Unit,
     navigateToURL: (url: String) -> Unit,
-    navigateToCategoryScreen: (categoryName: String) -> Unit,
     substanceWithCategories: SubstanceWithCategories
 ) {
     val substance = substanceWithCategories.substance
+    var isCategoryDialogVisible by remember {
+        mutableStateOf(false)
+    }
+    var selectedCategory: Category? = null
     Scaffold(
         topBar = {
             TopAppBar(title = { Text(substance.name) })
@@ -140,6 +141,13 @@ fun SubstanceScreen(
                 .verticalScroll(rememberScrollState())
                 .padding(padding)
         ) {
+            AnimatedVisibility(visible = isCategoryDialogVisible) {
+                CategoryDialog(
+                    category = selectedCategory,
+                    navigateToURL = navigateToURL,
+                    dismiss = { isCategoryDialogVisible = false }
+                )
+            }
             if (!substance.isApproved) {
                 Card(
                     modifier = Modifier
@@ -187,7 +195,13 @@ fun SubstanceScreen(
                             crossAxisSpacing = 5.dp,
                         ) {
                             categories.forEach { category ->
-                                CategoryChipFromSubstanceScreen(category, navigateToCategoryScreen)
+                                CategoryChipFromSubstanceScreen(
+                                    category = category,
+                                    showCategoryDialog = {
+                                        selectedCategory = category
+                                        isCategoryDialogVisible = true
+                                    }
+                                )
                             }
                         }
                     }
@@ -525,11 +539,10 @@ fun VerticalSpace() {
     Spacer(modifier = Modifier.height(5.dp))
 }
 
-
 @Composable
 fun CategoryChipFromSubstanceScreen(
     category: Category,
-    navigateToCategoryScreen: (categoryName: String) -> Unit
+    showCategoryDialog: (category: Category) -> Unit
 ) {
     Row(
         horizontalArrangement = Arrangement.Center,
@@ -537,7 +550,7 @@ fun CategoryChipFromSubstanceScreen(
         modifier = Modifier
             .clip(shape = CircleShape)
             .clickable {
-                navigateToCategoryScreen(category.name)
+                showCategoryDialog(category)
             }
             .background(color = category.color.copy(alpha = 0.2f))
             .padding(vertical = 4.dp, horizontal = 10.dp)

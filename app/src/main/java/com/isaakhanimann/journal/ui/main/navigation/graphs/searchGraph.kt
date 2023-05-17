@@ -31,7 +31,6 @@ import com.isaakhanimann.journal.ui.tabs.search.custom.AddCustomSubstance
 import com.isaakhanimann.journal.ui.tabs.search.custom.EditCustomSubstance
 import com.isaakhanimann.journal.ui.tabs.search.substance.SubstanceScreen
 import com.isaakhanimann.journal.ui.tabs.search.substance.UrlScreen
-import com.isaakhanimann.journal.ui.tabs.search.substance.category.CategoryScreen
 
 
 fun NavGraphBuilder.searchGraph(navController: NavController) {
@@ -59,7 +58,6 @@ fun NavGraphBuilder.searchGraph(navController: NavController) {
                 navigateToSaferHallucinogensScreen = navController::navigateToSaferHallucinogens,
                 navigateToSaferStimulantsScreen = navController::navigateToSaferStimulants,
                 navigateToExplainTimeline = navController::navigateToExplainTimelineOnSearchTab,
-                navigateToCategoryScreen = navController::navigateToCategoryScreen,
                 navigateToVolumetricDosingScreen = navController::navigateToVolumetricDosingScreenOnSearchTab,
                 navigateToArticle = navController::navigateToURLScreenOnSearchTab
             )
@@ -71,11 +69,6 @@ fun NavGraphBuilder.searchGraph(navController: NavController) {
             val args = backStackEntry.arguments!!
             val url = args.getString(URL_KEY)!!
             UrlScreen(url = url)
-        }
-        composableWithTransitions(
-            ArgumentRouter.CategoryRouter.route, arguments = ArgumentRouter.CategoryRouter.args
-        ) {
-            CategoryScreen(navigateToURL = navController::navigateToURLScreenOnSearchTab)
         }
         composableWithTransitions(
             ArgumentRouter.EditCustomRouter.route, arguments = ArgumentRouter.EditCustomRouter.args

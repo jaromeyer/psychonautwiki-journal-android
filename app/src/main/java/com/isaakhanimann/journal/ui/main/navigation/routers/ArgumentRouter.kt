@@ -36,7 +36,6 @@ const val ADMINISTRATION_ROUTE_KEY = "administrationRoute"
 const val DOSE_KEY = "dose"
 const val IS_ESTIMATE_KEY = "isEstimate"
 const val UNITS_KEY = "units"
-const val CATEGORY_KEY = "category"
 
 // route starts
 private const val ROUTE_START_EXPERIENCES = "experiences/"
@@ -54,7 +53,6 @@ private const val ROUTE_START_CHOOSE_ROUTE = "chooseRoute/"
 private const val ROUTE_START_CHOOSE_DOSE = "chooseDose/"
 private const val ROUTE_START_CHOOSE_TIME = "chooseTime/"
 private const val ROUTE_START_SUBSTANCE_COMPANION = "substancesCompanion/"
-private const val ROUTE_START_CATEGORY = "category/"
 private const val ROUTE_START_URL = "url/"
 private const val ROUTE_START_JOURNAL_TAB_URL = "journalTabUrl/"
 private const val ROUTE_START_SAFER_TAB_URL = "saferTabUrl/"
@@ -104,11 +102,6 @@ sealed class ArgumentRouter(val route: String, val args: List<NamedNavArgument>)
     object URLRouterOnSaferTab : ArgumentRouter(
         route = "$ROUTE_START_SAFER_TAB_URL{$URL_KEY}",
         args = listOf(navArgument(URL_KEY) { type = NavType.StringType })
-    )
-
-    object CategoryRouter : ArgumentRouter(
-        route = "$ROUTE_START_CATEGORY{$CATEGORY_KEY}",
-        args = listOf(navArgument(CATEGORY_KEY) { type = NavType.StringType })
     )
 
     object CustomChooseRouteRouter : ArgumentRouter(
@@ -228,10 +221,6 @@ fun NavController.navigateToChooseCustomRoute(substanceName: String) {
 
 fun NavController.navigateToSubstanceCompanionScreen(substanceName: String) {
     navigate(ROUTE_START_SUBSTANCE_COMPANION + substanceName)
-}
-
-fun NavController.navigateToCategoryScreen(categoryName: String) {
-    navigate(ROUTE_START_CATEGORY + categoryName)
 }
 
 fun NavController.navigateToCheckInteractions(substanceName: String) {
